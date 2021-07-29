@@ -1,0 +1,37 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<meta http-equiv="content-type" charset="utf-8">
+
+<div id="app">
+    <button v-on:click="get_data">get book info.</button>
+    <div>{{title}}</div>
+</div> 
+
+<script>
+
+var app = new Vue({
+  el: '#app',
+  data: {
+      title : ""
+  },
+  methods: {
+
+    get_data : function(){
+      axios.get('https://www.googleapis.com/books/v1/volumes?q=isbn:9784839970253').then( res => {
+          console.log(res.data.items[0].volumeInfo.title)
+          this.title = res.data.items[0].volumeInfo.title;
+      });
+
+    },
+  },
+  
+  mounted(){
+  }
+})
+
+</script>
+
+
+<style>
+
+</style>

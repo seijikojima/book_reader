@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<style>
+h1 { font-size: 320%; }
+p { font-size: 300%; }
+input { font-size: 360%; }
+</style>
+<body>
+
+<script>
+function scanBarcode() {
+    // var callbackUri = encodeURIComponent(location.origin + location.pathname + "?r=EAN")
+    var callbackUri = encodeURIComponent('https://www.googleapis.com/books/v1/volumes?q=isbn:'+"EAN")
+    document.location = "pic2shop://scan?callback=" + callbackUri
+    console.log(callbackUri)
+}
+</script>
+
+<h1>書籍バーコード読み取り＆検索</h1>
+
+<p>書籍情報: %s</p>
+
+<input type="button" value="バーコード読み取り" onclick="scanBarcode();" />
+
+<p>Python デバッグ情報 FieldStorage: %s</p>
+</body>
+</html>
