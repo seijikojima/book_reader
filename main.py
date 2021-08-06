@@ -1,12 +1,13 @@
-from flask import *
-from flask import render_template
+import uvicorn
+from fastapi import FastAPI
+from starlette.responses import FileResponse 
 
-# app = Flask(__name__)
-app = Flask(__name__, static_folder='./')
+app = FastAPI()
 
-@app.route("/")
-def main_page():    
-    return current_app.send_static_file('index.html')
+@app.get('/')
+def get_main_page(ean):
+    print(ean)
+    return FileResponse('index.html')
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == '__main__':
+    uvicorn.run(app, host="0.0.0.0", port=5000)

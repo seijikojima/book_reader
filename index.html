@@ -1,27 +1,69 @@
-<!DOCTYPE html>
-<html lang="ja">
-<style>
-h1 { font-size: 320%; }
-p { font-size: 300%; }
-input { font-size: 360%; }
-</style>
-<body>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<meta http-equiv="content-type" charset="utf-8">
+
+<div id="app">
+    <button v-on:click="get_data">get book info.</button>
+    <div>タイトル　:　{{title}}</div>
+    <div>著者　：　{{author}}</div>
+    <div>EAN : {{ean}}</div>
+
+</div> 
 
 <script>
-function scanBarcode() {
-    // var callbackUri = encodeURIComponent(location.origin + location.pathname + "?r=EAN")
-    var callbackUri = encodeURIComponent('https://www.googleapis.com/books/v1/volumes?q=isbn:'+"EAN")
-    document.location = "pic2shop://scan?callback=" + callbackUri
-    console.log(callbackUri)
+ console.log("hoge")
+
+ function getParam(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
+
+var app = new Vue({
+  el: '#app',
+  data: {
+      title : "",
+      author : "",
+      ean : ""
+  },
+  methods: {
+
+    get_data : function(){
+
+      // ① pic2shopアプリ起動
+      // ② localhostのアプリにhttp get http://192.168.0.10:5000/?ean=[isbn number]
+      document.location = "pic2shop://scan?callback=" + "http:192.168.0.10:5000/"
+    },
+  },
+  
+  mounted(){
+
+    console.log("search",location.search)
+
+
+    if( location.search !== "" ){
+      this.ean = getParam('ean')
+
+      if ( this.ean !== ""){
+        // ③ googleapi for booksにget request.
+        axios.get('https://www.googleapis.com/books/v1/volumes?q=isbn:'+this.ean).then( res => {
+            this.title = res.data.items[0].volumeInfo.title;
+            this.author = res.data.items[0].volumeInfo.authors[0];
+            console.log(res)
+        });
+      }
+    }
+    
+  }
+})
+
 </script>
 
-<h1>書籍バーコード読み取り＆検索</h1>
 
-<p>書籍情報: %s</p>
+<style>
 
-<input type="button" value="バーコード読み取り" onclick="scanBarcode();" />
-
-<p>Python デバッグ情報 FieldStorage: %s</p>
-</body>
-</html>
+</style>
